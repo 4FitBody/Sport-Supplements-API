@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using SportSupplements_API.Core.Repositories;
 using SportSupplements_API.Infrastructure.Commands;
 
 namespace SportSupplements_API.Infrastructure.Handlers;
 
-public class CreateHandler
+public class CreateHandler : IRequestHandler<CreateCommand>
 {
     private readonly ISportSupplementRepository sportSupplementRepository;
 
