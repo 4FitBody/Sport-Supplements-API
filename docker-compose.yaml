@@ -14,7 +14,7 @@ services:
     ports:
       - 9090:8080
     networks:
-      -supplementbridgenetwork
+      - supplementbridgenetwork
     restart: always
 
   supplementsmongodb:
