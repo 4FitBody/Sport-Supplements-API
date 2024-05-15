@@ -1,8 +1,8 @@
-using System.Reflection;
-using Microsoft.EntityFrameworkCore;
+
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
+using SportSupplements_API.Core.Models;
 using SportSupplements_API.Core.Repositories;
-using SportSupplements_API.Infrastructure.Data;
 using SportSupplements_API.Infrastructure.Repositories;
 using SportSupplements_API.Presentation.Options;
 
@@ -10,28 +10,32 @@ var builder = WebApplication.CreateBuilder(args);
 
 var blobOptionsSection = builder.Configuration.GetSection("BlobOptions");
 
+var connectionString = builder.Configuration.GetSection("SportSupplementDb").Value;
+
+var databaseName = builder.Configuration.GetSection("dbName").Value;
+
+var collectionName = builder.Configuration.GetSection("collectionName").Value;
+
 var blobOptions = blobOptionsSection.Get<BlobOptions>() ?? throw new Exception("Couldn't create blob options object");
 
 builder.Services.Configure<BlobOptions>(blobOptionsSection);
 
-var infrastructureAssembly = typeof(SportSupplementDbContext).Assembly;
+var infrastructureAssembly = typeof(SportSupplementMongoRepository).Assembly;
 
 builder.Services.AddMediatR(configurations =>
 {
     configurations.RegisterServicesFromAssembly(infrastructureAssembly);
 });
 
-var connectionString = builder.Configuration.GetConnectionString("SportSupplementsDb");
-
-builder.Services.AddDbContext<SportSupplementDbContext>(dbContextOptionsBuilder =>
+builder.Services.AddSingleton<ISportSupplementRepository>(provider =>
 {
-    dbContextOptionsBuilder.UseNpgsql(connectionString, o =>
+    if (string.IsNullOrWhiteSpace(connectionString))
     {
-        o.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName);
-    });
+        throw new Exception($"{connectionString} not found");
+    }
+    return new SportSupplementMongoRepository(connectionString, databaseName, collectionName);
 });
 
-builder.Services.AddScoped<ISportSupplementRepository, SportSupplementSqlRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -61,13 +65,22 @@ builder.Services.AddCors(options =>
     options.AddPolicy("BlazorWasmPolicy", corsBuilder =>
     {
         corsBuilder
-            .WithOrigins("http://localhost:5160")
+            .AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var client = new MongoClient(connectionString);
+
+    var newsDb = client.GetDatabase("SportSupplementDb");
+
+    var newsCollection = newsDb.GetCollection<SportSupplement>("SportSupplement");
+}
 
 app.UseSwagger();
 
