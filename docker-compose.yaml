@@ -1,11 +1,11 @@
 version: '2.2'
 
 services:
-  suplementapiapp:
-    image: suplementapi
-    container_name: suplementapiapp
+  supplementapiapp:
+    image: supplementapi
+    container_name: supplementapiapp
     depends_on:
-      - mongodb
+      - supplementsmongodb
     build:
       context: .
       dockerfile: Dockerfile
@@ -14,28 +14,28 @@ services:
     ports:
       - 9090:8080
     networks:
-      -suplementbridgenetwork
+      -supplementbridgenetwork
     restart: always
 
-  mongodb:
+  supplementsmongodb:
     image: mongo
-    container_name: mongodb
+    container_name: supplementsmongodb
     expose:
       - 27017
     ports:
       - 27017:27017
     networks:
-      - suplementbridgenetwork
+      - supplementbridgenetwork
     volumes:
-      - mysuplementmongovolume:/data/db
-      - mysuplementmongovolume:/data/configdb
+      - mysupplementmongovolume:/data/db
+      - mysupplementmongovolume:/data/configdb
     restart: always
 
   
 
 networks:
-  suplementbridgenetwork:
+  supplementbridgenetwork:
     driver: bridge
 
 volumes:
-  mysuplementmongovolume:
+  mysupplementmongovolume:
