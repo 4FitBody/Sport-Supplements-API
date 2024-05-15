@@ -1,5 +1,4 @@
-using System.Reflection;
-using Microsoft.EntityFrameworkCore;
+
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using SportSupplements_API.Core.Models;
@@ -27,8 +26,6 @@ builder.Services.AddMediatR(configurations =>
 {
     configurations.RegisterServicesFromAssembly(infrastructureAssembly);
 });
-
-
 
 builder.Services.AddSingleton<ISportSupplementRepository>(provider =>
 {
