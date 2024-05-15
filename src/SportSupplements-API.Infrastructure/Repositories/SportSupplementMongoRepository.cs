@@ -2,21 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Driver;
+using SportSupplements_API.Core.Models;
+using SportSupplements_API.Core.Repositories;
 
 namespace SportSupplements_API.Infrastructure.Repositories;
 
-public class SportSuplementMongoRepository : ISportISportSupplementRepository
+public class SportSupplementMongoRepository : ISportSupplementRepository
 {
     private readonly IMongoDatabase sportSupplementDb;
     private readonly IMongoCollection<SportSupplement> mycollection;
 
-    public SportSuplementMongoRepository(string connectionString, string databaseName, string collectionName)
+    public SportSupplementMongoRepository(string connectionString, string databaseName, string collectionName)
     {
         var client = new MongoClient(connectionString);
 
-        this.sportSuplementDb = client.GetDatabase(databaseName);
+        this.sportSupplementDb = client.GetDatabase(databaseName);
 
-        this.mycollection = this.sportSupplementDb.GetCollection<News>(collectionName);
+        this.mycollection = this.sportSupplementDb.GetCollection<SportSupplement>(collectionName);
     }
 
 
@@ -28,7 +31,7 @@ public class SportSuplementMongoRepository : ISportISportSupplementRepository
     {
         var sportSupplement = await this.mycollection.FindAsync(s => s.IsApproved == true);
 
-        var allSportSupplement = news.ToList();
+        var allSportSupplement = sportSupplement.ToList();
 
         return allSportSupplement;
     }
