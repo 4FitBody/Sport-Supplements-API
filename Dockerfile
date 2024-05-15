@@ -14,4 +14,4 @@ WORKDIR /app
 
 COPY --from=build /src/dist .
 
-ENTRYPOINT ["dotnet", "Sport-Supplements-API.Presentation.dll"]
+ENTRYPOINT ["dotnet", "SportSupplements-API.Presentation.dll"]
