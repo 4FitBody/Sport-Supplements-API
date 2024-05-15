@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using SportSupplements_API.Core.Repositories;
 using SportSupplements_API.Infrastructure.Data;
-using SportSupplements_API.Infrastructure.Repositories;
 using SportSupplements_API.Presentation.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,7 +30,7 @@ builder.Services.AddDbContext<SportSupplementDbContext>(dbContextOptionsBuilder 
     });
 });
 
-builder.Services.AddScoped<ISportSupplementRepository, SportSupplementSqlRepository>();
+
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -61,7 +60,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("BlazorWasmPolicy", corsBuilder =>
     {
         corsBuilder
-            .WithOrigins("http://localhost:5160")
+            .AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
