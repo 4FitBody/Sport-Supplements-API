@@ -4,8 +4,6 @@ services:
   supplementapiapp:
     image: supplementapi
     container_name: supplementapiapp
-    depends_on:
-      - supplementsmongodb
     build:
       context: .
       dockerfile: Dockerfile
