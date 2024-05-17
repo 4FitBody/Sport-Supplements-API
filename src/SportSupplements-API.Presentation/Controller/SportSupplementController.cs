@@ -20,7 +20,6 @@ namespace SportSupplements_API.Presentation.Controller;
 [Route("api/[controller]/[action]")]
 public class SportSupplementController : ControllerBase
 {
-
     private readonly ISender sender;
     private readonly BlobContainerService blobContainerService;
 
@@ -85,7 +84,7 @@ public class SportSupplementController : ControllerBase
 
             IsApproved = false,
 
-            ImageUrl = "https://4fitbodystorage.blob.core.windows.net/images/" + path
+            ImageUrl = "https://4fitbodystorage.blob.core.windows.net/supplement-images/" + path
         };
 
         await this.blobContainerService.UploadAsync(new MemoryStream(imageFileData!), rawPath);
@@ -112,20 +111,19 @@ public class SportSupplementController : ControllerBase
     [Route("/api/[controller]/[action]/{id}")]
     public async Task<IActionResult> Update(int? id, [FromBody] SportSupplementDto sportSupplementDto)
     {
-        var sportSupplement = new SportSupplement
-        {
-            Name = sportSupplementDto.Name,
+        var getByIdQuery = new GetByIdQuery(id);
 
-            Description = sportSupplementDto.Description,
-            
-            ManufactureCountry = sportSupplementDto.ManufactureCountry,
-            
-            Quantity = sportSupplementDto.Quantity,
-            
-            IsApproved = false,
-            
-            ImageUrl = sportSupplementDto.ImageUrl
-        };
+        var sportSupplement = await this.sender.Send(getByIdQuery);
+
+        sportSupplement.Description = sportSupplementDto.Description;
+
+        sportSupplement.Name = sportSupplementDto.Name;
+
+        sportSupplement.Quantity = sportSupplementDto.Quantity;
+
+        sportSupplement.ManufactureCountry = sportSupplementDto.ManufactureCountry;
+
+        sportSupplement.IsApproved = false;
 
         var createCommand = new UpdateCommand(id, sportSupplement);
 
@@ -133,5 +131,4 @@ public class SportSupplementController : ControllerBase
 
         return base.RedirectToAction(actionName: "Index");
     }
-
 }

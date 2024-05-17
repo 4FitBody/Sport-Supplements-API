@@ -22,11 +22,15 @@ public class SportSupplementMongoRepository : ISportSupplementRepository
         this.mycollection = this.sportSupplementDb.GetCollection<SportSupplement>(collectionName);
     }
 
-
     public async Task CreateAsync(SportSupplement sportSupplement)
     {
+        var lastIndex = this.mycollection.Find(e => e.Id >= 0).ToList().Last().Id;
+
+        sportSupplement.Id = lastIndex + 1;
+
         await this.mycollection.InsertOneAsync(sportSupplement);
     }
+
     public async Task<IEnumerable<SportSupplement>?> GetAllAsync()
     {
         var sportSupplement = await this.mycollection.FindAsync(s => s.IsApproved == true);
@@ -49,11 +53,11 @@ public class SportSupplementMongoRepository : ISportSupplementRepository
         await this.mycollection.FindOneAndDeleteAsync(s => s.Id == id);
     }
 
-
     public async Task UpdateAsync(int id, SportSupplement sportSupplementToUpdate)
     {
         await this.mycollection.ReplaceOneAsync<SportSupplement>(filter: s => s.Id == id, replacement: sportSupplementToUpdate);
     }
+
     public async Task ApproveAsync(int id)
     {
         var update = Builders<SportSupplement>.Update.Set(s => s.IsApproved, false);
