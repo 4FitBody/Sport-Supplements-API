@@ -17,20 +17,6 @@ services:
       - supplementbridgenetwork
     restart: always
 
-  supplementsmongodb:
-    image: mongo
-    container_name: supplementsmongodb
-    expose:
-      - 27017
-    ports:
-      - 27017:27017
-    networks:
-      - supplementbridgenetwork
-    volumes:
-      - mysupplementmongovolume:/data/db
-      - mysupplementmongovolume:/data/configdb
-    restart: always
-
   
 
 networks:
