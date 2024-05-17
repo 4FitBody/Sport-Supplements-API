@@ -35,7 +35,8 @@ services:
 
 networks:
   supplementbridgenetwork:
-    driver: bridge
+    name: exercises-api_mongobridgenetwork 
+    external: true
 
 volumes:
   mysupplementmongovolume:
